@@ -14,6 +14,8 @@
 		2E4F50EE2C3898F70055D441 /* Base in Resources */ = {isa = PBXBuildFile; fileRef = 2E4F50ED2C3898F70055D441 /* Base */; };
 		2E4F50F62C39C8200055D441 /* HourlyForecastCollectionViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E4F50F52C39C8200055D441 /* HourlyForecastCollectionViewCell.swift */; };
 		2E4F50F82C3A0A230055D441 /* Color+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E4F50F72C3A0A230055D441 /* Color+Extensions.swift */; };
+		2E4F50FA2C3A33CD0055D441 /* DailyForecastTableViewCell.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E4F50F92C3A33CD0055D441 /* DailyForecastTableViewCell.swift */; };
+		2E4F50FC2C3A3E270055D441 /* UiView+Extensions.swift in Sources */ = {isa = PBXBuildFile; fileRef = 2E4F50FB2C3A3E270055D441 /* UiView+Extensions.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -26,6 +28,8 @@
 		2E4F50EF2C3898F70055D441 /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
 		2E4F50F52C39C8200055D441 /* HourlyForecastCollectionViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = HourlyForecastCollectionViewCell.swift; sourceTree = "<group>"; };
 		2E4F50F72C3A0A230055D441 /* Color+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "Color+Extensions.swift"; sourceTree = "<group>"; };
+		2E4F50F92C3A33CD0055D441 /* DailyForecastTableViewCell.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = DailyForecastTableViewCell.swift; sourceTree = "<group>"; };
+		2E4F50FB2C3A3E270055D441 /* UiView+Extensions.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "UiView+Extensions.swift"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -42,7 +46,9 @@
 		2E4F50D52C3898F60055D441 = {
 			isa = PBXGroup;
 			children = (
+				2E4F50F92C3A33CD0055D441 /* DailyForecastTableViewCell.swift */,
 				2E4F50F52C39C8200055D441 /* HourlyForecastCollectionViewCell.swift */,
+				2E4F50FB2C3A3E270055D441 /* UiView+Extensions.swift */,
 				2E4F50F72C3A0A230055D441 /* Color+Extensions.swift */,
 				2E4F50E02C3898F60055D441 /* Weather app */,
 				2E4F50DF2C3898F60055D441 /* Products */,
@@ -140,8 +146,10 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				2E4F50FC2C3A3E270055D441 /* UiView+Extensions.swift in Sources */,
 				2E4F50F82C3A0A230055D441 /* Color+Extensions.swift in Sources */,
 				2E4F50E62C3898F60055D441 /* ViewController.swift in Sources */,
+				2E4F50FA2C3A33CD0055D441 /* DailyForecastTableViewCell.swift in Sources */,
 				2E4F50E22C3898F60055D441 /* AppDelegate.swift in Sources */,
 				2E4F50F62C39C8200055D441 /* HourlyForecastCollectionViewCell.swift in Sources */,
 				2E4F50E42C3898F60055D441 /* SceneDelegate.swift in Sources */,
