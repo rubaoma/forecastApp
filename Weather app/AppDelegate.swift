@@ -34,3 +34,7 @@ class AppDelegate: UIResponder, UIApplicationDelegate {
 
 }
 
+var ENV: ApiKeyable {
+    return APIKey()
+}
+

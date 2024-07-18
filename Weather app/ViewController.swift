@@ -11,7 +11,6 @@ class ViewController: UIViewController {
     
     private lazy var backgroundView: UIImageView = {
         let imageView = UIImageView(frame: .zero)
-        imageView.image = UIImage(named: "background")
         imageView.contentMode = .scaleAspectFill
         imageView.translatesAutoresizingMaskIntoConstraints = false
         return imageView
@@ -30,7 +29,6 @@ class ViewController: UIViewController {
         let label  = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 20)
-        label.text = "Fortaleza"
         label.textAlignment = .center
         label.textColor = UIColor.primaryColor
         return label
@@ -40,7 +38,6 @@ class ViewController: UIViewController {
         let label  = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 70, weight: .bold)
-        label.text = "25ºC"
         label.textAlignment = .left
         label.textColor = UIColor.primaryColor
         return label
@@ -49,10 +46,7 @@ class ViewController: UIViewController {
     private lazy var weatherIcon: UIImageView = {
         let imageView  = UIImageView()
         imageView.translatesAutoresizingMaskIntoConstraints = false
-        imageView.image = UIImage(named: "sunIcon")
         imageView.contentMode = .scaleAspectFit
-        
-      
         return imageView
     }()
     
@@ -69,7 +63,6 @@ class ViewController: UIViewController {
         let label  = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
-        label.text = "1000mm"
         label.textColor = UIColor.constrastColor
         return label
     }()
@@ -95,7 +88,6 @@ class ViewController: UIViewController {
         let label  = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
-        label.text = "10km/h"
         label.textColor = UIColor.constrastColor
         return label
     }()
@@ -124,7 +116,7 @@ class ViewController: UIViewController {
         let label  = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
         label.font = UIFont.systemFont(ofSize: 14, weight: .semibold)
-        label.text = "PREVISÃO POR HORA"
+        label.text = "PREVISÃO A CADA 3 HORAS"
         label.textColor = UIColor.constrastColor
         label.textAlignment = .center
         return label
@@ -159,19 +151,82 @@ class ViewController: UIViewController {
         tableView.translatesAutoresizingMaskIntoConstraints = false
         tableView.backgroundColor = .clear
         tableView.dataSource = self
+        tableView.delegate = self
         tableView.register(DailyForecastTableViewCell.self, forCellReuseIdentifier: DailyForecastTableViewCell.indentifier)
         return tableView
     }()
+    
+    private let service = ServiceApi()
+    private var city = City(lat: "-3.71839", lon: "-38.5434", name: "Fortaleza")
+    private var forecastNowResponse: ForecastNowResponse?
+    private var weekForecastResponse: WeekForecastResponse?
     
     
     override func viewDidLoad() {
         super.viewDidLoad()
         setupView()
+        fetchData()
+       
+    }
+    
+    private func fetchData() {
+        let dispatchGroup = DispatchGroup()
+
+            dispatchGroup.enter()
+            service.fetchDataforecastNow(city: city) { [weak self] response in
+                self?.forecastNowResponse = response
+                dispatchGroup.leave()
+            }
+
+            dispatchGroup.enter()
+            service.fetchDataWeekForecast(city: city) { [weak self] response in
+                self?.weekForecastResponse = response
+                dispatchGroup.leave()
+            }
+
+            dispatchGroup.notify(queue: .main) { [weak self] in
+                guard let self = self else { return }
+                self.loadData()
+            }
+//        service.fetchDataforecastNow(city: city) { [weak self] response in
+//            self?.forecastNowResponse = response
+//            DispatchQueue.main.async {
+//                self?.loadData()
+//            }
+//        }
+//        service.fetchDataWeekForecast(city: city) { [weak self] response in
+//            self?.weekForecastResponse = response
+//            DispatchQueue.main.async {
+//                self?.loadData()
+//            }
+//        }
+        
+    }
+    
+    private func loadData(){
+        cityLabel.text = city.name
+        tempetureLabel.text = forecastNowResponse?.main.temp.toCelsius()
+        humidityValueLabel.text = "\(forecastNowResponse?.main.humidity ?? 0) mm"
+        windValueLabel.text = "\(forecastNowResponse?.wind.speed ?? 0) km/h"
+        weatherIcon.image = UIImage(named: forecastNowResponse?.weather.first?.icon ?? "")
+        
+        autoHourSelectBackground()
+        
+        hourlyColectionView.reloadData()
+        dailyForecastTableView.reloadData()
+        
+    }
+    
+    private func autoHourSelectBackground() {
+        if forecastNowResponse?.dt.isDayTime() ?? true {
+            backgroundView.image = UIImage(named: "background-day")
+        } else {
+            backgroundView.image = UIImage(named: "background-nigth")
+        }
     }
     
     private func setupView(){
-        view.backgroundColor = .gray
-        
+        view.backgroundColor = .white
         // always add the custonView on the view before contraint customView
         setHierarchy()
         //create the constraints
@@ -220,11 +275,12 @@ class ViewController: UIViewController {
             cityLabel.heightAnchor.constraint(equalToConstant: 20),
             
             tempetureLabel.topAnchor.constraint(equalTo: cityLabel.bottomAnchor, constant: 12),
-            tempetureLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 26),
+            tempetureLabel.leadingAnchor.constraint(equalTo: headerView.leadingAnchor, constant: 18),
+            tempetureLabel.heightAnchor.constraint(equalToConstant: 70),
             
             weatherIcon.heightAnchor.constraint(equalToConstant: 86),
             weatherIcon.widthAnchor.constraint(equalToConstant: 86),
-            weatherIcon.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -26),
+            weatherIcon.trailingAnchor.constraint(equalTo: headerView.trailingAnchor, constant: -18),
             weatherIcon.centerYAnchor.constraint(equalTo: tempetureLabel.centerYAnchor),
             weatherIcon.leadingAnchor.constraint(equalTo: tempetureLabel.trailingAnchor, constant: 14)
         ])
@@ -263,27 +319,46 @@ class ViewController: UIViewController {
 
 extension ViewController: UICollectionViewDataSource {
     func collectionView(_ collectionView: UICollectionView, numberOfItemsInSection section: Int) -> Int {
-        return 10
+        weekForecastResponse?.list.count ?? 0
     }
     
     func collectionView(_ collectionView: UICollectionView, cellForItemAt indexPath: IndexPath) -> UICollectionViewCell {
-        let cell = collectionView.dequeueReusableCell(
+       guard let cell = collectionView.dequeueReusableCell(
             withReuseIdentifier:HourlyForecastCollectionViewCell.identifier,
-            for: indexPath)
+            for: indexPath) as? HourlyForecastCollectionViewCell else {
+           return UICollectionViewCell()
+       }
+        
+        let forecastWeek = weekForecastResponse?.list[indexPath.row]
+        cell.loadData(time: forecastWeek?.dt.toHourFormat(),
+                      icon: UIImage(named: forecastWeek?.weather.first?.icon ?? ""),
+                      temp: forecastWeek?.main.temp.toCelsius())
         return cell
     }
 }
 
-extension ViewController: UITableViewDataSource {
+extension ViewController: UITableViewDataSource, UITableViewDelegate {
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        10
+        weekForecastResponse?.list.count ?? 0
     }
     
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: DailyForecastTableViewCell.indentifier, for: indexPath)
+        guard let cell = tableView.dequeueReusableCell(
+            withIdentifier: DailyForecastTableViewCell.indentifier,
+            for: indexPath) as? DailyForecastTableViewCell else {
+                return UITableViewCell()
+            }
+        
+        let dayWeekForecast = weekForecastResponse?.list[indexPath.row]
+        cell.loadData(weekDay: dayWeekForecast?.dt.toWeekdayName().uppercased(),
+                      min: dayWeekForecast?.main.tempMin.toCelsius(),
+                      max: dayWeekForecast?.main.tempMax.toCelsius(),
+                      icon: UIImage(named: dayWeekForecast?.weather.first?.icon ?? ""))
         return cell
     }
     
-    
+    func tableView(_ tableView: UITableView, heightForRowAt indexPath: IndexPath) -> CGFloat {
+        60
+    }
 }
 
