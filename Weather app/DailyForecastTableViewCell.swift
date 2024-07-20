@@ -14,7 +14,6 @@ class DailyForecastTableViewCell: UITableViewCell {
     private lazy var weedDayLabel: UILabel = {
         let label = UILabel()
         label.translatesAutoresizingMaskIntoConstraints = false
-        label.text = "TER"
         label.textColor = UIColor.constrastColor
         label.font = UIFont.systemFont(ofSize: 12, weight: .semibold)
         return label
